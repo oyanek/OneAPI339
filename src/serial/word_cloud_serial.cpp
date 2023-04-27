@@ -3,14 +3,13 @@
 #include <iostream>
 #include <stdlib.h>
 #include <functional>
-
 #include <sycl/sycl.hpp>
 #include <CLI/CLI.hpp>
 
 using namespace std;
 
 // change to users exact path
-const string DEF_DICT = "/home/u189950/339/OneAPI339/WOTW.txt";
+const string DEF_DICT = "/home/u189146/OneAPI339/WOTW.txt";
 const size_t DEF_BITS = 12000000;
 
 string dict = DEF_DICT;
