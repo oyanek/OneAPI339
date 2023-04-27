@@ -12,12 +12,12 @@
 
 ///hash, create window size, CLI options
 
-using namespace sycl = cl::sycl;
+using namespace sycl;
 
-const string DEF_DICT = "/home/u189146/OneAPI339/WOTW.txt";
+const std::string DEF_DICT = "/home/u189146/OneAPI339/WOTW.txt";
 const size_t DEF_BITS = 12000000;
 
-string dict = DEF_DICT;
+std::string dict = DEF_DICT;
 size_t bits = DEF_BITS;
 
 
