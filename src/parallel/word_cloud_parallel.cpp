@@ -57,14 +57,8 @@ int main(const int argc, const char *const argv[]){
     }
     words.push_back(temp_win);
   }
+  
 
-  for (const auto& inner_win : words) {
-    cout << "NEW WINDOW" << endl;
-    for (const auto& str : inner_win){
-      //cout << str << " ";
-    }
-    cout << endl;
-  }
 }
 
       // for (auto i: windows)
