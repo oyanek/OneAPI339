@@ -19,13 +19,13 @@ std::string dict = DEF_DICT;
 size_t bits = DEF_BITS;
 int win_size = DEF_WIN_SIZE;
 
-vector<vector<size_t>> buffers;
+// vector<vector<size_t>> buffers;
 
-void hash_count(string word){
-    hash<string> h;
-    size_t hash = h(word);
-    hash_words[hash % bits]++;
-}
+// void hash_count(string word){
+//     hash<string> h;
+//     size_t hash = h(word);
+//     hash_words[hash % bits]++;
+// }
 
 
 int main(const int argc, const char *const argv[]){
@@ -35,12 +35,48 @@ int main(const int argc, const char *const argv[]){
     CLI11_PARSE(app,argc,argv);
 
 
-  //load dictionary 
+  //load dictionary into vector, create vector to store word count
+  vector<int> wordCount;
+  vector<string>windows;
+  vector<string>partWin;
+  vector<string>window;
   ifstream ifs(dict);
       if (!ifs) {
           cerr << "Failed to open dictionary file: [" << dict << "] (suggest changing code to reflect exact path on your machine)" << endl;
           return 1;
       }
+
+      string word;
+      while (ifs >> word) {
+        int count;
+        windows.push_back(word);
+        wordCount.push_back(count);
+        count++;
+      }
+      ifs.close(); 
+
+      cerr << wordCount.size() << endl;
+      // for (auto i: windows)
+      //   std::cout << i << ' ';
+
+      // for (int i =0; i < windows.size(), win_size);{
+      //   window = windows[i:i + win_size];
+      //   partWin.append(window);
+      // }
+
+      // for (auto i: window)
+      //   std::cout << i << ' ';
+
+
+
+//    original_vector = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+//   chunk_size = 3
+// chunks = []
+// for i in range(0, len(original_vector), chunk_size):
+//     chunk = original_vector[i:i+chunk_size]
+//     chunks.append(chunk)
+// print(chunks)
+
 //     const int N = 10000000;
 //     int data1[N], data2[N], data3[N]; 
 
@@ -130,63 +166,64 @@ int main(const int argc, const char *const argv[]){
 
 ///////////////////////////////////////////////////////////////////
 
-size_t VectorAdd2(sycl::queue &q1, sycl::queue &q2, const IntArray &a,
-                  const IntArray &b, IntArray &sum, int iter) {
-  sycl::range num_items{a.size() / 2};
+// size_t VectorAdd2(sycl::queue &q1, sycl::queue &q2, const IntArray &a,
+//                   const IntArray &b, IntArray &sum, int iter) {
+//   sycl::range num_items{a.size() / 2};
 
 
-     //get start time and submit the first kernel to q1
-     auto startTotalTime = std::chrono::high_resolution_clock::now()
+//      //get start time and submit the first kernel to q1
+//      auto startTotalTime = std::chrono::high_resolution_clock::now()
   
-  {
-    sycl::buffer a1_buf(a.data(), num_items);
-    sycl::buffer b1_buf(b.data(), num_items);
-    sycl::buffer sum1_buf(sum.data(), num_items);
+//   {
+//     sycl::buffer a1_buf(a.data(), num_items);
+//     sycl::buffer b1_buf(b.data(), num_items);
+//     sycl::buffer sum1_buf(sum.data(), num_items);
 
-    sycl::buffer a2_buf(a.data() + a.size() / 2, num_items);
-    sycl::buffer b2_buf(b.data() + a.size() / 2, num_items);
-    sycl::buffer sum2_buf(sum.data() + a.size() / 2, num_items);
-    for (int i = 0; i < iter; i++) {
+//     sycl::buffer a2_buf(a.data() + a.size() / 2, num_items);
+//     sycl::buffer b2_buf(b.data() + a.size() / 2, num_items);
+//     sycl::buffer sum2_buf(sum.data() + a.size() / 2, num_items);
+//     for (int i = 0; i < iter; i++) {
 
-      get start time and submit the first kernel to q
-      auto start2 = std::chrono::high_resolution_clock::now();
-      q.submit([&](sycl::handler& h) {
-        // Input accessors
-        sycl::accessor a_acc(a1_buf, h, sycl::read_only);
-        sycl::accessor b_acc(b1_buf, h, sycl::read_only);
-        // Output accessor
-        sycl::accessor sum_acc(sum1_buf, h, sycl::write_only, sycl::no_init);
+//       get start time and submit the first kernel to q
+//       auto start2 = std::chrono::high_resolution_clock::now();
+//       q.submit([&](sycl::handler& h) {
+//         // Input accessors
+//         sycl::accessor a_acc(a1_buf, h, sycl::read_only);
+//         sycl::accessor b_acc(b1_buf, h, sycl::read_only);
+//         // Output accessor
+//         sycl::accessor sum_acc(sum1_buf, h, sycl::write_only, sycl::no_init);
 
-        h.parallel_for(num_items,
-                       [=](auto i) { sum_acc[i] = a_acc[i] + b_acc[i]; });
-      });
+//         h.parallel_for(num_items,
+//                        [=](auto i) { sum_acc[i] = a_acc[i] + b_acc[i]; });
+//       });
 
-      // do the work on host
-      q2.submit([&](sycl::handler& h) {
-        // Input accessors
-        sycl::accessor a_acc(a2_buf, h, sycl::read_only);
-        sycl::accessor b_acc(b2_buf, h, sycl::read_only);
-        // Output accessor
-        sycl::accessor sum_acc(sum2_buf, h, sycl::write_only, sycl::no_init);
+//       // do the work on host
+//       q2.submit([&](sycl::handler& h) {
+//         // Input accessors
+//         sycl::accessor a_acc(a2_buf, h, sycl::read_only);
+//         sycl::accessor b_acc(b2_buf, h, sycl::read_only);
+//         // Output accessor
+//         sycl::accessor sum_acc(sum2_buf, h, sycl::write_only, sycl::no_init);
 
-        h.parallel_for(num_items,
-                       [=](auto i) { sum_acc[i] = a_acc[i] + b_acc[i]; });
-      });
-    };
+//         h.parallel_for(num_items,
+//                        [=](auto i) { sum_acc[i] = a_acc[i] + b_acc[i]; });
+//       });
+//     };
 
 
-    // On some platforms this explicit flush of queues is needed
-    // to ensure the overlap in execution between the CPU and GPU
-    // cl_command_queue cq = q1.get();
-    // clFlush(cq);
-    // cq=q2.get();
-    // clFlush(cq);
-  }
+//     // On some platforms this explicit flush of queues is needed
+//     // to ensure the overlap in execution between the CPU and GPU
+//     // cl_command_queue cq = q1.get();
+//     // clFlush(cq);
+//     // cq=q2.get();
+//     // clFlush(cq);
+//   }
 
-  q1.wait();
-  q2.wait();
-  auto end = std::chrono::steady_clock::now();
-  std::cout << "Vector add2 completed on device - took "
-            << (end - start).count() << " u-secs\n";
-  return ((end - start).count());
-} // end VectorAdd2
+//   q1.wait();
+//   q2.wait();
+//   auto end = std::chrono::steady_clock::now();
+//   std::cout << "Vector add2 completed on device - took "
+//             << (end - start).count() << " u-secs\n";
+//   return ((end - start).count());
+// } // end VectorAdd2
+}
