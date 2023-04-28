@@ -4,15 +4,11 @@
 #include <vector>
 #include <CL/sycl.hpp>
 #include <CLI/CLI.hpp>
-#include <buffer.hpp>
-#include <device.hpp>
-#include <device_selector.hpp>
-#include <accessor.hpp>
-#include <queue.hpp>
+
 
 ///hash, create window size, CLI options
 
-using namespace sycl;
+using namespace cl::sycl;
 
 const std::string DEF_DICT = "/home/u189146/OneAPI339/WOTW.txt";
 const size_t DEF_BITS = 12000000;
@@ -27,17 +23,17 @@ int main(const int argc, const char *const argv[]){
     ///choose amout of buffers to use
     CLI11_PARSE(app,argc,argv);
 
-    const int N = dict;
-    int data1[N], data2[N], data2[N]; 
+    const int N = 10000000;
+    int data1[N], data2[N], data3[N]; 
 
-    buffer<int, 1> buf1(data1, range<1>(N), {property::buffer::use_host_ptr(), property::buffer::device::device_type::cpu});
-    buffer<int, 1> buf2(data2, range<1>(N), {property::buffer::use_host_ptr(), property::buffer::device::device_type::gpu});
-    buffer<int, 1> buf2(data2, range<1>(N), {property::buffer::use_host_ptr(), property::buffer::device::device_type::gpu});
+    buffer<int, 1> buf1(data1, range<1>(N), {property::buffer::use_host_ptr(), property::buffer::cpu_selector_v});
+    buffer<int, 1> buf2(data2, range<1>(N), {property::buffer::use_host_ptr(), property::buffer::gpu_selector_v});
+    buffer<int, 1> buf3(data3, range<1>(N), {property::buffer::use_host_ptr(), property::buffer::gpu_selector_v});
     
     // three queues, one for each device
-    queue q1{cpu_selector()};
-    queue q2{gpu_selector()};
-    queue q2{gpu_selector()};
+    queue q1{cpu_selector_v()};
+    queue q2{gpu_selector_v()};
+    queue q3{gpu_selector_v()};
 
 
     // get start time and submit the second kernel to q1
@@ -67,7 +63,7 @@ int main(const int argc, const char *const argv[]){
     auto start3 = std::chrono::high_resolution_clock::now();
     q3.submit([&](handler& h) {
         // get a reference to the buffer
-        auto a = buf2.get_access<access::mode::read_write>(h);
+        auto a = buf3.get_access<access::mode::read_write>(h);
         // process the data in parallel using a parallel_for
         h.parallel_for(N, [=](auto i) {
         a[i] = a[i] + 1;
@@ -90,7 +86,7 @@ int main(const int argc, const char *const argv[]){
     //print time results for buffers, done before printing results
     std::cout << "Kernel 1 execution time: " << elapsed1.count() << " ms" << std::endl;
     std::cout << "Kernel 2 execution time: " << elapsed2.count() << " ms" << std::endl;
-    std::cout << "Kernel 2 execution time: " << elapsed2.count() << " ms" << std::endl;
+    std::cout << "Kernel 3 execution time: " << elapsed3.count() << " ms" << std::endl;
 
     //print results
     for (int i = 0; i < N; i++) {
