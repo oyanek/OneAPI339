@@ -28,7 +28,10 @@ void hash_count(string word, vector<size_t> buffer){
 
 int main(const int argc, const char *const argv[]){
     CLI::App app{"Serial word cloud"};
-    app.set_help_flag("-h,--help", "we need help too");
+    app.option_defaults()->always_capture_default(true);
+    app.add_option("-w,--window-size", win_size, "window size")->check(CLI::PositiveNumber.description(" >= 1"));
+    app.add_option("-b,--bit-size", bits, "bit size (greater than 1000000 recommend)")->check(CLI::PositiveNumber.description(" >= 1"));
+    app.add_option("-d,--dict", dict, "set dictionary real path");
     CLI11_PARSE(app,argc,argv);
 
     ifstream ifs(dict);
