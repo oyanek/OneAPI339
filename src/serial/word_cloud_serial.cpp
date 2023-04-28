@@ -9,7 +9,7 @@
 using namespace std;
 
 // change to users exact path
-const string DEF_DICT = "/home/u189950/339/OneAPI339/WOTW.txt";
+const string DEF_DICT = "/home/u189146/OneAPI339/WOTW.txt";
 const size_t DEF_BITS = 1200000;
 const int DEF_WIN_SIZE = 20000;
 
