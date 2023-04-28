@@ -11,7 +11,7 @@
 
 using namespace std;
 
-const std::string DEF_DICT = "/home/u189146/OneAPI339/WOTW.txt";
+const std::string DEF_DICT = "/home/u189950/339/OneAPI339/WOTW.txt";
 const size_t DEF_BITS = 12000000;
 const int DEF_WIN_SIZE = 20000;
 
@@ -29,33 +29,44 @@ int win_size = DEF_WIN_SIZE;
 
 
 int main(const int argc, const char *const argv[]){
-    CLI::App app{"Parallel word cloud"};
-    app.set_help_flag("-h,--help", "we need help too");
-    ///choose amout of buffers to use
-    CLI11_PARSE(app,argc,argv);
-
+  CLI::App app{"Parallel word cloud"};
+  app.set_help_flag("-h,--help", "we need help too");
+  ///choose amout of buffers to use
+  CLI11_PARSE(app,argc,argv);
 
   //load dictionary into vector, create vector to store word count
-  vector<int> wordCount;
-  vector<string>windows;
-  vector<string>partWin;
-  vector<string>window;
   ifstream ifs(dict);
-      if (!ifs) {
-          cerr << "Failed to open dictionary file: [" << dict << "] (suggest changing code to reflect exact path on your machine)" << endl;
-          return 1;
-      }
+  if (!ifs) {
+    cerr << "Failed to open dictionary file: [" << dict << "] (suggest changing code to reflect exact path on your machine)" << endl;
+    return 1;
+  }
 
-      string word;
-      while (ifs >> word) {
-        int count;
-        windows.push_back(word);
-        wordCount.push_back(count);
-        count++;
-      }
-      ifs.close(); 
+  vector<vector<string>>words;
+  vector<string>word_win;
 
-      cerr << wordCount.size() << endl;
+  string word;
+  while (ifs >> word) {
+    word_win.push_back(word);
+  }
+  ifs.close(); 
+
+  vector<string> temp_win;
+  for (int i = 0; i < word_win.size(); i += win_size) {
+    for (int j = i; j < i + win_size && j < word_win.size(); j++) {
+      temp_win.push_back(word_win[j]);
+    }
+    words.push_back(temp_win);
+  }
+
+  for (const auto& inner_win : words) {
+    cout << "NEW WINDOW" << endl;
+    for (const auto& str : inner_win){
+      //cout << str << " ";
+    }
+    cout << endl;
+  }
+}
+
       // for (auto i: windows)
       //   std::cout << i << ' ';
 
@@ -226,4 +237,4 @@ int main(const int argc, const char *const argv[]){
 //             << (end - start).count() << " u-secs\n";
 //   return ((end - start).count());
 // } // end VectorAdd2
-}
+
