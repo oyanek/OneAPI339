@@ -9,18 +9,21 @@
 using namespace std;
 
 // change to users exact path
-const string DEF_DICT = "/home/u189146/OneAPI339/WOTW.txt";
-const size_t DEF_BITS = 12000000;
+const string DEF_DICT = "/home/u189950/339/OneAPI339/WOTW.txt";
+const size_t DEF_BITS = 1200000;
+const int DEF_WIN_SIZE = 20000;
 
 string dict = DEF_DICT;
 size_t bits = DEF_BITS;
+int win_size = DEF_WIN_SIZE;
 
-vector<size_t> hash_words(bits, 0);
+vector<vector<size_t>> buffers;
+//vector<unordered_map<size_t, size_t> buffers
 
-void hash_count(string word){
+void hash_count(string word, vector<size_t> buffer){
     hash<string> h;
     size_t hash = h(word);
-    hash_words[hash % bits]++;
+    buffer[hash % bits]++;
 }
 
 int main(const int argc, const char *const argv[]){
@@ -34,15 +37,34 @@ int main(const int argc, const char *const argv[]){
         return 1;
     }
 
+    auto start = chrono::high_resolution_clock::now();
+
     int count1 = 0;
     string word;
     while (ifs >> word){
-        hash_count(word);
+        if(count1%win_size==0){
+            cout << "Checkpoint " << count1 << endl;
+            buffers.emplace_back(bits, 0);
+        }
+        hash_count(word, buffers.back());
         count1++;
     }
     ifs.close();
 
-    //cout << "count1: " << count1 << endl;
-    for (const auto& elem : hash_words) cout << elem;
-    cout << endl << count1 << endl;
+    cout << count1 << endl;
+
+    auto end = chrono::high_resolution_clock::now();
+    auto elapsed = chrono::duration_cast<chrono::milliseconds>(end-start);
+    cout << "Elapsed time: " << elapsed.count()/1000 << " seconds" << endl;
+
+    int count2 = 0;
+    // for(auto b : buffers){
+    //     count2++;
+    //     cout << "Buffer " << count2 << ":" << endl;
+    //     int i = 0;
+    //     for(const auto hash : b){
+    //         if(hash > 0) cout << i << ": " << hash << endl;
+    //         i++;
+    //     }
+    // }
 }
