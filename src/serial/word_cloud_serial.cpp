@@ -9,7 +9,7 @@
 using namespace std;
 
 // change to users exact path
-const string DEF_DICT = "/home/u189146/OneAPI339/WOTW.txt";
+const string DEF_DICT = "/home/u189950/339/OneAPI339/FRANK.txt";
 const size_t DEF_BITS = 1200000;
 const int DEF_WIN_SIZE = 20000;
 
@@ -40,13 +40,15 @@ int main(const int argc, const char *const argv[]){
         return 1;
     }
 
+    cout << "STATUS BEGIN CLOCK" << endl;
+
     auto start = chrono::high_resolution_clock::now();
 
     int count1 = 0;
     string word;
     while (ifs >> word){
         if(count1%win_size==0){
-            cout << "Checkpoint " << count1 << endl;
+            cout << "STATUS " << count1 << endl;
             buffers.emplace_back(bits, 0);
         }
         hash_count(word, buffers.back());
@@ -54,7 +56,7 @@ int main(const int argc, const char *const argv[]){
     }
     ifs.close();
 
-    cout << count1 << endl;
+    cout << "total word count: " << count1 << endl;
 
     auto end = chrono::high_resolution_clock::now();
     auto elapsed = chrono::duration_cast<chrono::milliseconds>(end-start);
